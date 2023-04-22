@@ -8,7 +8,6 @@ on:
         default: 'default value'
 jobs:
   my_job:
-    if: startsWith(github.event.inputs.my_input, 'feature')
     runs-on: ubuntu-latest
     steps:
       - name: Display Current Branch
