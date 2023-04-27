@@ -2,11 +2,7 @@ name: My PR Action
 
 on:
   pull_request:
-    branches:
-      - main
-      - develop
-      - feature2
-      - '*'
+    branches: [ '*' ]
       
 jobs:
   build:
