@@ -1,0 +1,21 @@
+name: Protected Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  protected-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Prompt for password
+        id: password
+        run: |
+          echo "::set-output name=password::$(read -s -p 'Enter password: '; echo $REPLY)"
+
+      - name: Use password
+        run: |
+          echo "Password: ${{ steps.password.outputs.password }}"
