@@ -16,6 +16,9 @@ jobs:
 
     - name: Check admin status
       run: |
+        output=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
+                     "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission")
+        echo $output
         actor_role=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
                      "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission" \
                      | jq -r '.permission')
