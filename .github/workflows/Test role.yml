@@ -1,7 +1,6 @@
 name: Admin Actions
 
 on:
-  workflow_dispatch:
   pull_request:
     types:
       - opened
@@ -16,9 +15,6 @@ jobs:
 
     - name: Check admin status
       run: |
-        output=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
-                     "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission")
-        echo $output
         actor_role=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
                      "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission" \
                      | jq -r '.permission')
@@ -33,3 +29,14 @@ jobs:
     - name: Run actual tasks
       run: |
         # Put your tasks here that should only run for admins
+
+  run_after_admin_check:
+    needs: check_admin_role
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: New Job After Admin Check
+      run: |
+        echo "This job runs after the admin check job."
+        # Put your tasks here
+
