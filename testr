@@ -1,0 +1,64 @@
+// Specify the base folder path
+var baseFolderPath = '/abc/prod/';
+
+// Fetch all folders in the specified path matching the regular expression
+var folders = listFolders(baseFolderPath, /.*\.dat.*/);
+
+// Iterate through the folders
+folders.forEach(function (folder) {
+    // Set the current folder path in a collection variable
+    pm.collectionVariables.set('folderPath', folder);
+
+    // Fetch all files in the current folder matching the regular expression
+    var files = listFiles(folder, /.*\.dat.*/);
+
+    // Iterate through the files
+    files.forEach(function (file) {
+        // Read the content of the file
+        var filePath = folder + '/' + file;
+        var fileContent = readFile(filePath);
+
+        // Trigger your POST request with the file content
+        pm.sendRequest({
+            url: 'Your API URL',
+            method: 'POST', // Change the method as needed
+            body: {
+                mode: 'raw',
+                raw: fileContent
+            }
+            // Add other request parameters as needed
+        }, function (err, response) {
+            // Handle the response as needed
+            if (err) {
+                console.error(err);
+            } else {
+                // Save the response content to a file or handle it in some way
+                pm.environment.set(file + '_response', response.text());
+            }
+        });
+    });
+});
+
+// Function to list folders in a given path matching a regular expression
+function listFolders(basePath, regex) {
+    var fs = require('fs');
+    var path = require('path');
+    return fs.readdirSync(basePath).filter(function (file) {
+        return fs.statSync(path.join(basePath, file)).isDirectory() && regex.test(file);
+    });
+}
+
+// Function to list files in a given folder matching a regular expression
+function listFiles(folderPath, regex) {
+    var fs = require('fs');
+    var path = require('path');
+    return fs.readdirSync(folderPath).filter(function (file) {
+        return fs.statSync(path.join(folderPath, file)).isFile() && regex.test(file);
+    });
+}
+
+// Function to read file content
+function readFile(filePath) {
+    var fs = require('fs');
+    return fs.readFileSync(filePath, 'utf8');
+}
